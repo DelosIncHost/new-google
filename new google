@@ -1,0 +1,27 @@
+function removeTextButKeepLinks() {
+  var body = DocumentApp.getActiveDocument().getBody();
+  var paragraphs = body.getParagraphs();
+
+  for (var i = paragraphs.length - 1; i >= 0; i--) {
+    var paragraph = paragraphs[i];
+    var textElements = paragraph.getChild(0).asText();
+    var text = textElements.getText();
+    var linkFound = false;
+
+    // Iterate through the text to find a URL
+    for (var j = 0; j < text.length; j++) {
+      var url = textElements.getLinkUrl(j);
+      if (url) {
+        textElements.setText(url); // Keep only the URL
+        textElements.setLinkUrl(0, url.length - 1, url); // Retain hyperlink
+        linkFound = true;
+        break; // Exit loop after finding the first URL
+      }
+    }
+
+    // If no link was found in the paragraph, remove it
+    if (!linkFound) {
+      body.removeChild(paragraph);
+    }
+  }
+}
